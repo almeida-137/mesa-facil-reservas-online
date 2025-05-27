@@ -19,6 +19,9 @@ import ReservationsPage from "./pages/ReservationsPage";
 import SettingsPage from "./pages/SettingsPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import PublicReservationPage from "./pages/PublicReservationPage";
+import MenuPage from "./pages/MenuPage";
+import OrdersPage from "./pages/OrdersPage";
+import PublicMenuPage from "./pages/PublicMenuPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +39,7 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/r/:restaurantSlug" element={<PublicReservationPage />} />
+            <Route path="/r/:restaurantSlug/cardapio" element={<PublicMenuPage />} />
             
             {/* Protected Admin Routes */}
             <Route path="/admin" element={
@@ -46,6 +50,8 @@ const App = () => (
               <Route index element={<DashboardPage />} />
               <Route path="tables" element={<TablesPage />} />
               <Route path="reservations" element={<ReservationsPage />} />
+              <Route path="menu" element={<MenuPage />} />
+              <Route path="orders" element={<OrdersPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="subscription" element={<SubscriptionPage />} />
             </Route>

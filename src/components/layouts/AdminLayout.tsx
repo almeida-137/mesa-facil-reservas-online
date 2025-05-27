@@ -1,4 +1,3 @@
-
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,9 @@ import {
   CreditCard,
   ChefHat,
   Menu,
-  X
+  X,
+  BookOpen,
+  ClipboardList
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -29,6 +30,8 @@ const AdminLayout = () => {
     { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
     { path: '/admin/tables', icon: ChefHat, label: 'Mesas' },
     { path: '/admin/reservations', icon: Calendar, label: 'Reservas' },
+    { path: '/admin/menu', icon: BookOpen, label: 'Cardápio' },
+    { path: '/admin/orders', icon: ClipboardList, label: 'Pedidos' },
     { path: '/admin/subscription', icon: CreditCard, label: 'Assinatura' },
     { path: '/admin/settings', icon: Settings, label: 'Configurações' },
   ];
@@ -135,9 +138,12 @@ const AdminLayout = () => {
           
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-600">
-              Link público: 
+              Links públicos: 
               <code className="ml-1 px-2 py-1 bg-gray-100 rounded text-xs">
                 /r/{user?.restaurant_slug}
+              </code>
+              <code className="ml-1 px-2 py-1 bg-gray-100 rounded text-xs">
+                /r/{user?.restaurant_slug}/cardapio
               </code>
             </span>
           </div>
