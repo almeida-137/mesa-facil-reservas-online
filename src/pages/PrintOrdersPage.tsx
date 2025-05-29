@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Print, Clock, AlertTriangle, CheckCircle, ChefHat, Coffee, ShoppingBag } from 'lucide-react';
+import { Printer, Clock, AlertTriangle, CheckCircle, ChefHat, Coffee, ShoppingBag } from 'lucide-react';
 
 const PrintOrdersPage = () => {
   const [printHistory, setPrintHistory] = useState([
@@ -109,7 +109,7 @@ const PrintOrdersPage = () => {
       case 'cozinha': return <ChefHat className="w-4 h-4" />;
       case 'bar': return <Coffee className="w-4 h-4" />;
       case 'balcao': return <ShoppingBag className="w-4 h-4" />;
-      default: return <Print className="w-4 h-4" />;
+      default: return <Printer className="w-4 h-4" />;
     }
   };
 
@@ -191,7 +191,7 @@ const PrintOrdersPage = () => {
                 <p className="text-purple-600 text-sm font-medium">Total Hoje</p>
                 <p className="text-2xl font-bold text-purple-700">{printHistory.length}</p>
               </div>
-              <Print className="w-8 h-8 text-purple-500" />
+              <Printer className="w-8 h-8 text-purple-500" />
             </div>
           </CardContent>
         </Card>
@@ -252,7 +252,7 @@ const PrintOrdersPage = () => {
                       onClick={() => handlePrint(order)}
                       className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
                     >
-                      <Print className="w-4 h-4 mr-2" />
+                      <Printer className="w-4 h-4 mr-2" />
                       🖨️ Imprimir Agora
                     </Button>
                   </div>
@@ -297,7 +297,7 @@ const PrintOrdersPage = () => {
                     
                     <div className="flex items-center justify-between text-sm text-gray-600">
                       <div className="flex items-center gap-1">
-                        <Print className="w-3 h-3" />
+                        <Printer className="w-3 h-3" />
                         Impresso às {item.printedAt}
                       </div>
                     </div>

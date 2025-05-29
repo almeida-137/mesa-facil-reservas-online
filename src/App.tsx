@@ -25,6 +25,7 @@ import OrdersPage from "./pages/OrdersPage";
 import PublicMenuPage from "./pages/PublicMenuPage";
 import FinancesPage from "./pages/FinancesPage";
 import NotFound from "./pages/NotFound";
+import PrintOrdersPage from './pages/PrintOrdersPage';
 
 // Create QueryClient with proper configuration
 const queryClient = new QueryClient({
