@@ -33,6 +33,7 @@ const AdminLayout = () => {
     { path: '/admin/reservations', icon: Calendar, label: 'Reservas' },
     { path: '/admin/menu', icon: BookOpen, label: 'Cardápio' },
     { path: '/admin/orders', icon: ClipboardList, label: 'Pedidos' },
+    { path: '/admin/print-orders', icon: Menu, label: 'Impressão' },
     { path: '/admin/finances', icon: DollarSign, label: 'Finanças' },
     { path: '/admin/subscription', icon: CreditCard, label: 'Assinatura' },
     { path: '/admin/settings', icon: Settings, label: 'Configurações' },

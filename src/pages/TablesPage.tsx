@@ -4,19 +4,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Plus, Edit, Trash2, Users, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Users, TrendingUp, Clock, CheckCircle, ClipboardList } from 'lucide-react';
+import NewTableModal from '@/components/NewTableModal';
+import TableOrderModal from '@/components/TableOrderModal';
 
 const TablesPage = () => {
+  const [showNewTableModal, setShowNewTableModal] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
+
   // Mock data - replace with Supabase data
   const [tables, setTables] = useState([
-    { id: 1, name: 'Mesa 1', capacity: 4, status: 'available' },
-    { id: 2, name: 'Mesa 2', capacity: 2, status: 'occupied' },
-    { id: 3, name: 'Mesa 3', capacity: 6, status: 'available' },
-    { id: 4, name: 'Mesa 4', capacity: 4, status: 'reserved' },
-    { id: 5, name: 'Mesa 5', capacity: 8, status: 'available' },
-    { id: 6, name: 'Mesa 6', capacity: 4, status: 'occupied' },
-    { id: 7, name: 'Mesa 7', capacity: 2, status: 'available' },
-    { id: 8, name: 'Mesa 8', capacity: 6, status: 'reserved' },
+    { id: 1, name: 'Mesa 1', capacity: 4, status: 'available', sector: 'interno' },
+    { id: 2, name: 'Mesa 2', capacity: 2, status: 'occupied', sector: 'interno', activeOrders: 2, totalValue: 85.50 },
+    { id: 3, name: 'Mesa 3', capacity: 6, status: 'available', sector: 'externo' },
+    { id: 4, name: 'Mesa 4', capacity: 4, status: 'reserved', sector: 'interno' },
+    { id: 5, name: 'Mesa 5', capacity: 8, status: 'occupied', sector: 'vip', activeOrders: 1, totalValue: 150.00 },
+    { id: 6, name: 'Mesa 6', capacity: 4, status: 'occupied', sector: 'varanda', activeOrders: 3, totalValue: 45.90 },
+    { id: 7, name: 'Mesa 7', capacity: 2, status: 'available', sector: 'interno' },
+    { id: 8, name: 'Mesa 8', capacity: 6, status: 'reserved', sector: 'externo' },
   ]);
 
   const occupiedTables = tables.filter(t => t.status === 'occupied').length;
@@ -44,6 +50,30 @@ const TablesPage = () => {
     );
   };
 
+  const getTableAvatar = (table: any) => {
+    if (table.status === 'occupied') {
+      if (table.totalValue > 100) return '😍'; // VIP
+      if (table.totalValue > 50) return '😊'; // Feliz
+      return '🍽️'; // Normal
+    }
+    if (table.status === 'reserved') return '⏰';
+    return '🪑'; // Disponível
+  };
+
+  const addTable = (newTableData: { name: string; capacity: number; sector: string }) => {
+    const newTable = {
+      id: Date.now(),
+      ...newTableData,
+      status: 'available'
+    };
+    setTables([...tables, newTable]);
+  };
+
+  const openOrderModal = (table: any) => {
+    setSelectedTable(table);
+    setShowOrderModal(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -51,7 +81,10 @@ const TablesPage = () => {
           <h1 className="text-3xl font-bold text-gray-900">🪑 Gestão de Mesas</h1>
           <p className="text-gray-600">Controle inteligente das suas mesas</p>
         </div>
-        <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+        <Button 
+          onClick={() => setShowNewTableModal(true)}
+          className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+        >
           <Plus className="w-4 h-4 mr-2" />
           Nova Mesa
         </Button>
@@ -134,11 +167,13 @@ const TablesPage = () => {
           <Card key={table.id} className="hover:shadow-lg transition-all duration-300 hover:scale-105">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
-                <CardTitle className="text-lg flex items-center">
-                  🪑 {table.name}
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-2xl animate-pulse">{getTableAvatar(table)}</span>
+                  {table.name}
                 </CardTitle>
                 {getStatusBadge(table.status)}
               </div>
+              <p className="text-sm text-gray-600">Setor: {table.sector}</p>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -146,6 +181,30 @@ const TablesPage = () => {
                   <Users className="w-4 h-4 mr-2" />
                   {table.capacity} pessoas
                 </div>
+
+                {table.status === 'occupied' && (
+                  <>
+                    <div className="bg-blue-50 p-2 rounded-lg">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-blue-600">Comandas ativas:</span>
+                        <span className="font-bold">{table.activeOrders || 0}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm mt-1">
+                        <span className="text-green-600">Total consumido:</span>
+                        <span className="font-bold text-green-700">R$ {table.totalValue?.toFixed(2) || '0.00'}</span>
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={() => openOrderModal(table)}
+                      size="sm" 
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
+                      <ClipboardList className="w-3 h-3 mr-1" />
+                      Gerenciar Comandas
+                    </Button>
+                  </>
+                )}
+
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm" className="flex-1">
                     <Edit className="w-3 h-3 mr-1" />
@@ -160,6 +219,18 @@ const TablesPage = () => {
           </Card>
         ))}
       </div>
+
+      <NewTableModal
+        open={showNewTableModal}
+        onOpenChange={setShowNewTableModal}
+        onAddTable={addTable}
+      />
+
+      <TableOrderModal
+        open={showOrderModal}
+        onOpenChange={setShowOrderModal}
+        table={selectedTable}
+      />
     </div>
   );
 };
