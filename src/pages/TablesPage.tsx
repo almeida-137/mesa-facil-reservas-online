@@ -1,22 +1,27 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Plus, Edit, Trash2, Users, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, Users, TrendingUp, Clock, CheckCircle, Eye } from 'lucide-react';
+import NewTableModal from '@/components/NewTableModal';
+import TableOrderModal from '@/components/TableOrderModal';
 
 const TablesPage = () => {
+  const [showNewTableModal, setShowNewTableModal] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [selectedTable, setSelectedTable] = useState<any>(null);
+
   // Mock data - replace with Supabase data
   const [tables, setTables] = useState([
-    { id: 1, name: 'Mesa 1', capacity: 4, status: 'available' },
-    { id: 2, name: 'Mesa 2', capacity: 2, status: 'occupied' },
-    { id: 3, name: 'Mesa 3', capacity: 6, status: 'available' },
-    { id: 4, name: 'Mesa 4', capacity: 4, status: 'reserved' },
-    { id: 5, name: 'Mesa 5', capacity: 8, status: 'available' },
-    { id: 6, name: 'Mesa 6', capacity: 4, status: 'occupied' },
-    { id: 7, name: 'Mesa 7', capacity: 2, status: 'available' },
-    { id: 8, name: 'Mesa 8', capacity: 6, status: 'reserved' },
+    { id: 1, name: 'Mesa 1', capacity: 4, status: 'available', sector: 'interno' },
+    { id: 2, name: 'Mesa 2', capacity: 2, status: 'occupied', sector: 'interno', revenue: 85.50 },
+    { id: 3, name: 'Mesa 3', capacity: 6, status: 'available', sector: 'externo' },
+    { id: 4, name: 'Mesa 4', capacity: 4, status: 'reserved', sector: 'vip' },
+    { id: 5, name: 'Mesa 5', capacity: 8, status: 'available', sector: 'externo' },
+    { id: 6, name: 'Mesa 6', capacity: 4, status: 'occupied', sector: 'interno', revenue: 142.30 },
+    { id: 7, name: 'Mesa 7', capacity: 2, status: 'available', sector: 'balcao' },
+    { id: 8, name: 'Mesa 8', capacity: 6, status: 'reserved', sector: 'vip' },
   ]);
 
   const occupiedTables = tables.filter(t => t.status === 'occupied').length;
@@ -44,6 +49,34 @@ const TablesPage = () => {
     );
   };
 
+  const getTableAvatar = (table: any) => {
+    if (table.status === 'occupied') {
+      if (table.revenue && table.revenue > 100) return '😍'; // Mesa VIP
+      return '😊'; // Mesa feliz
+    }
+    if (table.status === 'reserved') return '⏰';
+    return '🍽️'; // Mesa disponível
+  };
+
+  const getSectorIcon = (sector: string) => {
+    const icons = {
+      interno: '🏠',
+      externo: '🌳',
+      vip: '⭐',
+      balcao: '🥤'
+    };
+    return icons[sector as keyof typeof icons] || '🍽️';
+  };
+
+  const handleCreateTable = (newTable: any) => {
+    setTables(prev => [...prev, newTable]);
+  };
+
+  const handleTableClick = (table: any) => {
+    setSelectedTable(table);
+    setShowOrderModal(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -51,7 +84,10 @@ const TablesPage = () => {
           <h1 className="text-3xl font-bold text-gray-900">🪑 Gestão de Mesas</h1>
           <p className="text-gray-600">Controle inteligente das suas mesas</p>
         </div>
-        <Button className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
+        <Button 
+          className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600"
+          onClick={() => setShowNewTableModal(true)}
+        >
           <Plus className="w-4 h-4 mr-2" />
           Nova Mesa
         </Button>
@@ -131,10 +167,12 @@ const TablesPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {tables.map((table) => (
-          <Card key={table.id} className="hover:shadow-lg transition-all duration-300 hover:scale-105">
+          <Card key={table.id} className="hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer"
+                onClick={() => handleTableClick(table)}>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
                 <CardTitle className="text-lg flex items-center">
+                  <span className="text-2xl mr-2">{getTableAvatar(table)}</span>
                   🪑 {table.name}
                 </CardTitle>
                 {getStatusBadge(table.status)}
@@ -146,20 +184,52 @@ const TablesPage = () => {
                   <Users className="w-4 h-4 mr-2" />
                   {table.capacity} pessoas
                 </div>
+                
+                <div className="flex items-center text-sm text-gray-600 bg-blue-50 p-2 rounded-lg">
+                  <span className="mr-2">{getSectorIcon(table.sector)}</span>
+                  {table.sector.charAt(0).toUpperCase() + table.sector.slice(1)}
+                </div>
+
+                {table.revenue && (
+                  <div className="flex items-center text-sm text-green-600 bg-green-50 p-2 rounded-lg">
+                    <span className="mr-2">💰</span>
+                    R$ {table.revenue.toFixed(2)}
+                  </div>
+                )}
+
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button variant="outline" size="sm" className="flex-1" onClick={(e) => e.stopPropagation()}>
                     <Edit className="w-3 h-3 mr-1" />
                     Editar
                   </Button>
-                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700" onClick={(e) => e.stopPropagation()}>
                     <Trash2 className="w-3 h-3" />
                   </Button>
                 </div>
+
+                {table.status === 'occupied' && (
+                  <Button size="sm" className="w-full bg-gradient-to-r from-blue-500 to-blue-600">
+                    <Eye className="w-3 h-3 mr-1" />
+                    👀 Ver Comandas
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      <NewTableModal 
+        isOpen={showNewTableModal}
+        onClose={() => setShowNewTableModal(false)}
+        onCreateTable={handleCreateTable}
+      />
+
+      <TableOrderModal 
+        isOpen={showOrderModal}
+        onClose={() => setShowOrderModal(false)}
+        table={selectedTable}
+      />
     </div>
   );
 };
