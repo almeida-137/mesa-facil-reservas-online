@@ -23,6 +23,7 @@ import PublicReservationPage from "./pages/PublicReservationPage";
 import MenuPage from "./pages/MenuPage";
 import OrdersPage from "./pages/OrdersPage";
 import PublicMenuPage from "./pages/PublicMenuPage";
+import FinancesPage from "./pages/FinancesPage";
 import NotFound from "./pages/NotFound";
 
 // Create QueryClient with proper configuration
@@ -61,6 +62,7 @@ const App: React.FC = () => (
               <Route path="reservations" element={<ReservationsPage />} />
               <Route path="menu" element={<MenuPage />} />
               <Route path="orders" element={<OrdersPage />} />
+              <Route path="finances" element={<FinancesPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="subscription" element={<SubscriptionPage />} />
             </Route>

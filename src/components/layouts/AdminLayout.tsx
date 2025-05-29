@@ -11,7 +11,8 @@ import {
   Menu,
   X,
   BookOpen,
-  ClipboardList
+  ClipboardList,
+  DollarSign
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -32,6 +33,7 @@ const AdminLayout = () => {
     { path: '/admin/reservations', icon: Calendar, label: 'Reservas' },
     { path: '/admin/menu', icon: BookOpen, label: 'Cardápio' },
     { path: '/admin/orders', icon: ClipboardList, label: 'Pedidos' },
+    { path: '/admin/finances', icon: DollarSign, label: 'Finanças' },
     { path: '/admin/subscription', icon: CreditCard, label: 'Assinatura' },
     { path: '/admin/settings', icon: Settings, label: 'Configurações' },
   ];
